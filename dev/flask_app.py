@@ -29,14 +29,13 @@ grad_major = json.load(open(os.path.join(path,'grad_major.json')))
 
 hours = range(8, 20, 1)
 appt_length = range(1, 4)
-
+num_links = range(5)
 @app.route('/')
 def home():
     # etc etc, flask app code
     return
 @app.route('/user/recom_users')
 def recom_users():
-    time.sleep(1)
     n = request.headers.get('page')
     CONST = 10
     body = []
@@ -97,6 +96,7 @@ def recom_questions():
         datum['tags'] = list(set(random.choices(tags, k=random.randint(0,5))))
         datum['detail'] = fake.text()
         datum['question_id'] = str(uuid.uuid1())
+        datum['attachments'] = [fake.url() for _ in range(random.choice(num_links))]
         body.append(datum)
     response = app.response_class(
         response = json.dumps(body),
@@ -108,7 +108,6 @@ def recom_questions():
 
 @app.route('/user/questions')
 def get_questions():
-    time.sleep(1)
     n = request.headers.get('page')
     CONST = 10
     email = request.headers.get('user_id')
@@ -138,6 +137,7 @@ def get_questions():
         datum['tags'] = list(set(random.choices(tags, k=random.randint(0,5))))
         datum['detail'] = fake.text()
         datum['question_id'] = str(uuid.uuid1())
+        datum['attachments'] = [fake.url() for _ in range(random.choice(num_links))]
         body.append(datum)
     body = sorted(body, key=lambda x: x['appointment_time'], reverse=True)
 

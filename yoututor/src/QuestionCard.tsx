@@ -11,6 +11,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import Chip from '@material-ui/core/Chip';
+import Link from '@material-ui/core/Link';
 import InfoIcon from '@material-ui/icons/Info';
 import IconButton from '@material-ui/core/IconButton';
 import Slide from '@material-ui/core/Slide';
@@ -18,16 +19,20 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 export default function QuestionCard(props: any) {
     var button:any = null;
-    if (!props.isOwner) {
-        if (props.information.status == 'confirmed') {
-            button = 'cancel'
-        }
-    } else {
-        if (props.information.status != 'finished' && props.information.status != 'canceled') {
-            button = 'cancel'
+    if (props.isRecom) {
+        button = 'help'
+    } else{
+        if (!props.isOwner) {
+            if (props.information.status == 'confirmed') {
+                button = 'cancel'
+            }
         } else {
-            if (props.information.status == 'canceled') {
-                button = 'repost'
+            if (props.information.status != 'finished' && props.information.status != 'canceled') {
+                button = 'cancel'
+            } else {
+                if (props.information.status == 'canceled') {
+                    button = 'repost'
+                }
             }
         }
     }
@@ -44,7 +49,7 @@ export default function QuestionCard(props: any) {
     createStyles({
         root: {
             width:'60%',
-            background: (props.isTutor)
+            background: (props.isDark)
                         ?((button!=null)
                         ?(
                             (props.isOwner)
@@ -63,9 +68,6 @@ export default function QuestionCard(props: any) {
                         :(
                             '#ffffff'
                         )),
-            // marginLeft: (props.isOwner) 
-            //             ?('2%')
-            //             :('7%')
         },
     avatars: {
         width: theme.spacing(7),
@@ -74,8 +76,14 @@ export default function QuestionCard(props: any) {
     }),
     );
     const classes = useStyles();
-    
-    // console.log(history);
+    var urls:Array<any> = []
+    var counter = 1
+    props.information.attachments.forEach(element => {
+        urls.push(
+            <a href={element}>{'file' + JSON.stringify(counter) + ' '}</a>
+        )
+        counter += 1
+    })
     return (
     <Card className={classes.root}>
         <CardContent>
@@ -117,17 +125,33 @@ export default function QuestionCard(props: any) {
             <Grid item xs={10}>
                 {chips}
             </Grid>
-            <Grid item xs={2}>
-            <Typography variant="body2" color="textSecondary">
-                    {props.information.time}
-            </Typography>
-            </Grid>
-            <Grid item xs={10}>
-            <Typography variant="body2" color="textSecondary">
-                    {props.information.status}
-                </Typography>
-            </Grid>
+            {
+                (props.isRecom)
+                ?(
+                    <div></div>
+                )
+                :(
+                    <Grid item xs={2}>
+                    <Typography variant="body2" color="textSecondary">
+                            {props.information.time}
+                    </Typography>
+                    </Grid>
+                )
+            }
             
+            {
+                (props.isRecom)
+                ?(
+                    <div/>
+                )
+                :(
+                    <Grid item xs={10}>
+                <Typography variant="body2" color="textSecondary">
+                        {props.information.status}
+                    </Typography>
+                </Grid>
+                )
+            }
             <Grid item xs={2}>
             {
                 (button != null)
@@ -138,6 +162,11 @@ export default function QuestionCard(props: any) {
                     <div/>
                 )
             }
+            </Grid>
+            <Grid item xs={12}>
+                <Typography variant='body2' color='textSecondary'>
+                    {urls}
+                </Typography>
             </Grid>
             
         </Grid>

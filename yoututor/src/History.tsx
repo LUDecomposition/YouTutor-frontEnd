@@ -1,21 +1,17 @@
 import React, { useState } from 'react';
 
-import Main from '../Main/Main'
-import QuestionCards from '../Main/questionCards'
+import Header from './Header'
 import LinearProgress from '@material-ui/core/LinearProgress';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import InfiniteScroll from 'react-infinite-scroller';
-import { DataUsage } from '@material-ui/icons';
-import QuestionCard from '../Question/QuestionCard'
+import QuestionCard from './QuestionCard'
 import Container from '@material-ui/core/Container';
 
 var URL = 'http://localhost:8080/user/questions'
 
+export default function History(props: any) {
 
-export default function Question(props: any) {
-    const userToken = JSON.parse(props.userToken);
-    const user_id = userToken.emial;
     const [page, setPage] = useState(0);
     const [data, setData] = useState<any[]>([])
     function loadItems() {
@@ -23,9 +19,9 @@ export default function Question(props: any) {
             method:'GET', 
             headers: {
                 'page': JSON.stringify(page),
-                'user_id': user_id,
-                'first_name': userToken.given_name,
-                'last_name': userToken.family_name
+                'user_id': props.token.email,
+                'first_name': props.token.given_name,
+                'last_name': props.token.family_name
             }
         })
         .then(res => res.json())
@@ -40,23 +36,21 @@ export default function Question(props: any) {
     const loader = <LinearProgress color="secondary" />
     var items: Array<any> = []
     data.forEach(element => {
-        var isOwner = (element.user == (userToken.given_name + ' ' + userToken.family_name))
+        var isOwner = (element.user == (props.token.given_name + ' ' + props.token.family_name))
         items.push(
             <ListItem key={element.question_id}>
-                <div>
-                    <QuestionCard information={element} isOwner={isOwner} isTutor={props.isTutor} />
-                </div>
+                    <QuestionCard information={element} isOwner={isOwner} isDark={props.isDark} />
             </ListItem>
         )
         
     })
     return(
         <div>
-        <Main text={
+        <Header text={
             'History'
             }
-            isTutor={
-                props.isTutor
+            isDark={
+                props.isDark
             }
         />
         <Container maxWidth='lg' style={{textAlign: 'center'}}>

@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 
-export default function Main(props:any) {
+export default function Header(props:any) {
     const useStyles = makeStyles({
         root: {
             borderRadius: 0,
@@ -22,7 +22,7 @@ export default function Main(props:any) {
         });
     const classes = useStyles();
     return (
-    <Card className={classes.root} style={{background:(props.isTutor)
+    <Card className={classes.root} style={{background:(props.isDark)
                                             ?'#333333'
                                             :'linear-gradient(to bottom, #dc95ee, #ffffff)'}}>
         <Container maxWidth="lg">
