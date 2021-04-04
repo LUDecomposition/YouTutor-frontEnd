@@ -24,9 +24,10 @@ export const UserContext = React.createContext({
 
 const history = createBrowserHistory()
 type states = {
-  userToken: any,
-  isTutor: any
+  userToken: string|null,
+  isTutor: boolean
 }
+
 
 class App extends React.Component<{}, states> {
   // state: { userToken: string | null; };
@@ -34,7 +35,7 @@ class App extends React.Component<{}, states> {
     super(props);
     this.state = {
       userToken: window.sessionStorage.getItem('userToken'),
-      isTutor: false
+      isTutor: false,
     }
     this.switchRole = this.switchRole.bind(this)
   }

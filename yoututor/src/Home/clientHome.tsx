@@ -1,9 +1,30 @@
 import React from 'react';
 
-import StudentCard from '../QuestionCard/StudentCard'
+import Main from '../Main/Main'
+import QuestionCards from '../Main/questionCards'
+import TutorCards from '../Main/tutorCards'
 
 export default function ClientHome(props: any) {
     return(
-        <StudentCard />
-    ) 
-} 
+        <div>
+            <Main text={
+                (props.isTutor)
+                ?('Discover Questions')
+                :('Find Tutors')
+                }
+                isTutor={
+                    props.isTutor
+                }
+            />
+        {
+            (props.isTutor)
+            ?(
+                <QuestionCards />
+            )
+            :(
+                <TutorCards />
+            )
+        }
+        </div>
+    )
+}

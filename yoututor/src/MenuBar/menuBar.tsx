@@ -1,5 +1,5 @@
-import React from 'react';
-import { makeStyles, createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
+import React, { useState } from 'react';
+import {fade, makeStyles, createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 import { Route, Redirect, useHistory} from 'react-router-dom'
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -18,33 +18,86 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Box from '@material-ui/core/Box';
 import HelpIcon from '@material-ui/icons/Help';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
-const useStyles = makeStyles((theme) => ({
-root: {
-flexGrow: 1,
-},
-menuButton: {
-marginRight: theme.spacing(2.5),
-},
-title: {
-flexGrow: 1,
-},
-}));
-
+import TextField from '@material-ui/core/TextField';
+import Container from '@material-ui/core/Container';
+import { useEffect } from 'react';
+import InputBase from '@material-ui/core/InputBase';
+import SearchIcon from '@material-ui/icons/Search';
 const Login = () =>{
     window.location.href='https://ccfinalsy2938.auth.us-east-1.amazoncognito.com/login?client_id=1d1mb2ktfap98hgif1iigjb9fk&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=http://localhost:3000/login';}
 
-const Logout = () =>{
-    window.sessionStorage.clear()
-    window.location.href='/home'
-}
 // const toProfile = () =>{
 //     window.location.href='/profile'
 // }
 
+
 export default function ButtonAppBar(props: any) {
-    const classes = useStyles();
+    const [toShow, setShow] = useState(true);
+    useEffect(() => {
+        setShow(true);
+    },[])
+    const handleNavigation = (e: { currentTarget: any; }) => {
+        const window = e.currentTarget
+        if (window.scrollY == 0) {
+            setShow(true)
+        } else{
+            setShow(false)
+        }
+    }
+    window.addEventListener('scroll', e => handleNavigation(e));
+
+
     const userToken = (props.userToken != null)
     const isTutor = props.isTutor;
+    const useStyles = makeStyles((theme) => ({
+        root: {
+        border: 'None',
+        flexGrow: 1,
+        },
+        menuButton: {
+        marginRight: theme.spacing(2.5),
+        },
+        title: {
+        flexGrow: 1,
+        },
+        search: {
+            position: 'relative',
+            borderRadius: theme.shape.borderRadius,
+            backgroundColor: fade(theme.palette.common.white, 0.15),
+            '&:hover': {
+            backgroundColor: fade(theme.palette.common.white, 0.25),
+        },
+        marginRight: theme.spacing(2),
+        marginLeft: 0,
+        width: '100%',
+        [theme.breakpoints.up('sm')]: {
+            marginLeft: theme.spacing(3),
+            width: 'auto',
+        }},
+        searchIcon: {
+            padding: theme.spacing(0, 2),
+            height: '100%',
+            position: 'absolute',
+            pointerEvents: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        inputRoot: {
+        color: 'inherit',
+        },
+        inputInput: {
+        padding: theme.spacing(1, 1, 1, 0),
+        // vertical padding + font size from searchIcon
+        paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+        transition: theme.transitions.create('width'),
+        width: '100%',
+        [theme.breakpoints.up('md')]: {
+            width: '20ch',
+        },
+        },
+    }));
+    const classes = useStyles();
     const history = useHistory();
     var primaryColor = '';
     var secondaryColor = '';
@@ -54,7 +107,7 @@ export default function ButtonAppBar(props: any) {
             secondaryColor = '#ffffff'
         } else {
             primaryColor = '#dc95ee'
-            secondaryColor = '#7687d4'
+            secondaryColor = '#000000'
         }
     } else {
         primaryColor = '#9492ef'
@@ -69,20 +122,50 @@ export default function ButtonAppBar(props: any) {
             main: secondaryColor,
             },
         },});
-
+    
     return (
     <ThemeProvider theme={theme}>
         <div className={classes.root}>
-            <AppBar position="static">
+            <AppBar position="fixed" elevation={0} color="transparent">
+            <Container maxWidth="lg">
             <Toolbar>
-                <Box m="auto">
-                <Button 
-                onClick={() => {history.push('/')}}>
-                <h2 style={{fontFamily:'Righteous', color:(userToken)?((isTutor)?'#ffffff':'#000000'):'#ffffff'}}>YouTutor</h2></Button> 
-                </Box>
+                {
+                    toShow
+                    ?(
+                        <Box display="inline">
+                        <Button 
+                        onClick={() => {history.push('/')}}>
+                        <h2 style={{fontFamily:'Righteous', color:(userToken)?((isTutor)?'#ffffff':'#000000'):'#ffffff'}}>YouTutor</h2></Button> 
+                        </Box>
+                    )
+                    :(
+                        <div/>
+                    )
+                }
+                {
+                    (userToken && toShow)?
+                    (
+                    <div className={classes.search}>
+                    <div className={classes.searchIcon}>
+                        <SearchIcon />
+                    </div>
+                    <InputBase
+                        placeholder="Search…"
+                        classes={{
+                        root: classes.inputRoot,
+                        input: classes.inputInput,
+                        }}
+                        inputProps={{ 'aria-label': 'search' }}
+                    />
+                    </div>
+                    )
+                    :(
+                        <div/>
+                    )
+                }
                 <Typography variant="h6" className={classes.title}>
                 </Typography>
-                <Box mr={2}>
+                <Box display="inline">
                 {
                     userToken?
                     (
@@ -93,7 +176,7 @@ export default function ButtonAppBar(props: any) {
                     )
                 }
                 </Box>
-                <Box mx="auto">
+                <Box mx="auto" display="inline">
                 {
                     userToken?
                     (
@@ -113,14 +196,20 @@ export default function ButtonAppBar(props: any) {
                     onClick={() => {history.push('/profile')}}>
                     <PersonIcon />
                     </IconButton>)
-                    :(<IconButton edge="start" className={classes.menuButton} color="secondary" aria-label="menu" onClick={Login}>
+                    :(<IconButton edge="start" className={classes.menuButton} color="secondary" aria-label="menu" 
+                        onClick={Login}>
                     <CreateIcon />
                     </IconButton>)
                 }
                 {
                     userToken?
                     (
-                        <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={Logout}>
+                        <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu"
+                        onClick={() => {
+                            window.sessionStorage.clear()
+                            window.location.href='/'
+                            // history.push('/')
+                        }}>
                         <PowerSettingsNewIcon />
                         </IconButton>
                     )
@@ -129,7 +218,9 @@ export default function ButtonAppBar(props: any) {
                 </Box>
                 
             </Toolbar>
+            </Container>
             </AppBar>
+            {/* <Toolbar /> */}
         </div>
     </ThemeProvider>
     );}

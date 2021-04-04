@@ -3,13 +3,12 @@ import ClientHome from './clientHome'
 import PublicHome from './publicHome'
 export default function Home(props: any) {
     const isLogin = (props.userToken != null)
-    const isTutor = props.isTutor
     return(
         <div className="home">
         {
             isLogin?
             (
-                <ClientHome/>
+                <ClientHome isTutor={props.isTutor}/>
             )
             :(
                 <PublicHome/>

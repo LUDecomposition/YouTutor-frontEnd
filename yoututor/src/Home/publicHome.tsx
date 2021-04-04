@@ -10,7 +10,8 @@ const useStyles = makeStyles({
     root: {
         minWidth: 275,
         background: 'linear-gradient(to bottom, #9492ef, #dc95ee)',
-        borderRadius: 0
+        borderRadius: 0,
+        boxShadow: "none"
     },
     bullet: {
         display: 'inline-block',
