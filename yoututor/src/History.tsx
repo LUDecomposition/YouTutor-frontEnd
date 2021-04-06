@@ -57,7 +57,11 @@ export default function History(props: any) {
         var isOwner = (element.user == (props.token.given_name + ' ' + props.token.family_name))
         items.push(
             <ListItem key={element.question_id}>
-                    <QuestionCard information={element} isOwner={isOwner} isDark={props.isDark} isRecom={false} handleHelp={handleUserOpen}/>
+                    <QuestionCard information={element} 
+                    isOwner={isOwner} 
+                    isDark={props.isDark} isRecom={false}
+                    handleProfile={handleUserOpen}
+                    handleHelp={handleUserOpen}/>
             </ListItem>
         )
         
