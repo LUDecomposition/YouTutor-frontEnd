@@ -34,6 +34,50 @@ num_links = range(5)
 def home():
     # etc etc, flask app code
     return
+@app.route('/user/get_user')
+def get_user():
+    user_id = request.headers.get('user_id')
+    datum = {
+                'user_id': user_id,
+                'last_name': fake.last_name(),
+                'first_name': fake.first_name(),
+                'photo_url': None,
+                'gender': random.choice(genders),
+                'tutor': random.choice(tutors),
+                'degree': random.choice(degrees),
+                'school': random.choice(schools),
+                'tags': list(set(random.choices(tags, k=random.randint(0,5)))),
+                'introduction': fake.text(),
+                'picture': 'https://cdn.icon-icons.com/icons2/2248/PNG/512/cat_icon_138789.png'
+                }
+    if datum['degree'] == 'K12':
+        datum['major'] = None
+        datum['age'] = random.choice(range(13, 18))
+    elif datum['degree'] in ['B.S', 'B.A']:
+        datum['major'] = random.choice(college_major)
+        datum['age'] = random.choice(range(17, 17+6))
+    else:
+        datum['major'] = random.choice(grad_major)
+        datum['age'] = random.choice(range(20, 31))
+    phone = str(random.randint(1e9, 1e10-1))
+    phone = f'({phone[:3]})-{phone[3:6]}-{phone[6:]}'
+    if datum['tutor']:
+        availability = []
+        for _ in range(random.randint(0, 5)):
+            time_stamp = sorted(random.choices(hours, k=2))
+            while len(set(time_stamp)) == 1:
+                time_stamp = sorted(random.choices(hours, k=2))
+            time_stamp = '-'.join([str(i)+':00' for i in time_stamp])
+            time_stamp = time_stamp + ',' + fake.day_of_week()
+            availability.append(time_stamp)
+        datum['availability'] = availability
+    response = app.response_class(
+        response = json.dumps(datum),
+        status=200,
+        mimetype='application/json'
+    )
+    return  response
+
 @app.route('/user/recom_users')
 def recom_users():
     n = request.headers.get('page')
@@ -50,7 +94,8 @@ def recom_users():
                 'degree': random.choice(degrees),
                 'school': random.choice(schools),
                 'tags': list(set(random.choices(tags, k=random.randint(0,5)))),
-                'introduction': fake.text()
+                'introduction': fake.text(),
+                'picture': 'https://cdn.dribbble.com/users/1900827/screenshots/5354476/icon.png?compress=1&resize=800x600'
                 }
         if datum['degree'] == 'K12':
             datum['major'] = None
@@ -90,6 +135,7 @@ def recom_questions():
     for _ in range(CONST):
         datum = {}
         datum['tutor'] = None
+        datum['user_id'] = fake.email()
         datum['user'] = fake.name()
         datum['status'] = 'posted'
         datum['title'] = 'What is ' + fake.text().split(' ')[0]
@@ -97,6 +143,8 @@ def recom_questions():
         datum['detail'] = fake.text()
         datum['question_id'] = str(uuid.uuid1())
         datum['attachments'] = [fake.url() for _ in range(random.choice(num_links))]
+        datum['user_picture'] = 'https://cdn.icon-icons.com/icons2/2248/PNG/512/cat_icon_138789.png'
+        datum['tutor_picture'] = None
         body.append(datum)
     response = app.response_class(
         response = json.dumps(body),
@@ -138,6 +186,8 @@ def get_questions():
         datum['detail'] = fake.text()
         datum['question_id'] = str(uuid.uuid1())
         datum['attachments'] = [fake.url() for _ in range(random.choice(num_links))]
+        datum['user_picture'] = 'https://cdn.icon-icons.com/icons2/2248/PNG/512/cat_icon_138789.png'
+        datum['tutor_picture'] = 'https://cdn.dribbble.com/users/1900827/screenshots/5354476/icon.png?compress=1&resize=800x600'
         body.append(datum)
     body = sorted(body, key=lambda x: x['appointment_time'], reverse=True)
 

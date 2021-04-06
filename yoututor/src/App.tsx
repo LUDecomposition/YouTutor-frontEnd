@@ -7,6 +7,7 @@ import Menu from './Menu';
 import Home from './Home';
 import Login from './Login';
 import History from './History'
+import Profile from './Profile'
 
 const history = createBrowserHistory();
 
@@ -44,6 +45,12 @@ function App() {
             render={
               (props) =>
               <History token={token} isDark={isDark} {...props}/>
+            }
+          />
+          <Route exact path='/profile' 
+            render={
+              (props) =>
+              <Profile token={token} isDark={isDark} {...props}/>
             }
           />
         </Switch>

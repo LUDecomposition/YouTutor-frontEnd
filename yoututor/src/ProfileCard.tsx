@@ -27,8 +27,6 @@ export default function ProfileCard(props: any) {
             }
         }
     )
-    let hex = Math.floor(Math.random() * 0xFFFFFF);
-    let color = "#" + hex.toString(16);
     const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
@@ -37,7 +35,6 @@ export default function ProfileCard(props: any) {
     avatars: {
         width: theme.spacing(7),
         height: theme.spacing(7),
-        backgroundColor: color
         },
     button: {
 
@@ -51,9 +48,10 @@ export default function ProfileCard(props: any) {
         <CardContent>
         <Grid container direction="row" justify="flex-start" spacing={1} alignItems="center">
             <Grid item xs={2}>
+            <Button size="small" onClick={() => {props.handleProfile(props.profile.user_id)}}>
                 <Avatar alt={props.profile.first_name + ' ' + props.profile.last_name} 
-                src="/" className={classes.avatars}/>
-                
+                src={props.profile.picture} className={classes.avatars}/>
+            </Button>
             </Grid>
             <Grid item xs={7}>
                 <Typography gutterBottom variant="subtitle1">
@@ -90,9 +88,8 @@ export default function ProfileCard(props: any) {
             </Grid>
             <Grid container justify="flex-end" xs={1} alignItems="flex-end">
                     <CardActions>
-                    <IconButton>
-                        <InfoIcon/>
-                    </IconButton>
+                    <Button variant="outlined" size="small" 
+                    onClick={() => {props.handleAsk(props.profile.user_id, props.profile.first_name + ' ' + props.profile.last_name)}}>{'ask'}</Button>
                     </CardActions>
                 </Grid>
         </Grid>

@@ -90,7 +90,7 @@ export default function QuestionCard(props: any) {
         <Grid container direction="row" justify="flex-start" spacing={1} alignItems="center">
             <Grid item xs={4}>
                 <Avatar alt={props.information.user} 
-                src="/" className={classes.avatars}/>
+                src={props.information.user_picture} className={classes.avatars}/>
             </Grid>
             <Grid item xs={5}>
                 <Typography gutterBottom variant="subtitle1">
@@ -101,7 +101,8 @@ export default function QuestionCard(props: any) {
                 {
                     (props.information.tutor != null)
                     ?(<Avatar alt={props.information.tutor}
-                        src="/" className={classes.avatars}/>)
+                        src={props.information.tutor_picture}
+                        className={classes.avatars}/>)
                     :(
                         < div/>
                     )
@@ -156,7 +157,24 @@ export default function QuestionCard(props: any) {
             {
                 (button != null)
                 ?(
-                    <Button variant="outlined" size="small">{button}</Button>
+                    (button == 'help')
+                    ?(
+                        <Button 
+                        variant="outlined" 
+                        size="small"
+                        onClick={() => {props.handleHelp(props.information.user_id)}}
+                        >
+                        {button}
+                        </Button>
+                    )
+                    :(
+                        <Button 
+                        variant="outlined" 
+                        size="small"
+                        >
+                        {button}
+                        </Button>
+                    )
                 )
                 :(
                     <div/>
