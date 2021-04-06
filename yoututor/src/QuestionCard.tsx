@@ -76,21 +76,27 @@ export default function QuestionCard(props: any) {
     }),
     );
     const classes = useStyles();
-    var urls:Array<any> = []
-    var counter = 1
-    props.information.attachments.forEach(element => {
-        urls.push(
-            <a href={element}>{'file' + JSON.stringify(counter) + ' '}</a>
-        )
-        counter += 1
-    })
     return (
     <Card className={classes.root}>
         <CardContent>
         <Grid container direction="row" justify="flex-start" spacing={1} alignItems="center">
             <Grid item xs={4}>
-                <Avatar alt={props.information.user} 
-                src={props.information.user_picture} className={classes.avatars}/>
+                {
+                    (props.isRecom || !props.isOwner)
+                    ?(
+                        <Button
+                        size="small"
+                        onClick={() => {props.handleProfile(props.information.user_id)}}
+                        >
+                        <Avatar alt={props.information.user} 
+                        src={props.information.user_picture} className={classes.avatars}/>
+                        </Button>
+                    )
+                    :(
+                        <Avatar alt={props.information.user} 
+                        src={props.information.user_picture} className={classes.avatars}/>
+                    )
+                }
             </Grid>
             <Grid item xs={5}>
                 <Typography gutterBottom variant="subtitle1">
@@ -162,7 +168,14 @@ export default function QuestionCard(props: any) {
                         <Button 
                         variant="outlined" 
                         size="small"
-                        onClick={() => {props.handleHelp(props.information.user_id)}}
+                        onClick={() => {props.handleHelp(
+                            props.information.user_id,
+                            props.information.user,
+                            props.information.title,
+                            props.information.detail,
+                            props.information.attachment,
+                            props.information.tags
+                            )}}
                         >
                         {button}
                         </Button>
@@ -183,7 +196,7 @@ export default function QuestionCard(props: any) {
             </Grid>
             <Grid item xs={12}>
                 <Typography variant='body2' color='textSecondary'>
-                    {urls}
+                    <a href={props.information.attachment}>attachment</a>
                 </Typography>
             </Grid>
             

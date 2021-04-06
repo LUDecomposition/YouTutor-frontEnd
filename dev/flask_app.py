@@ -142,7 +142,7 @@ def recom_questions():
         datum['tags'] = list(set(random.choices(tags, k=random.randint(0,5))))
         datum['detail'] = fake.text()
         datum['question_id'] = str(uuid.uuid1())
-        datum['attachments'] = [fake.url() for _ in range(random.choice(num_links))]
+        datum['attachment'] = random.choice(num_links)
         datum['user_picture'] = 'https://cdn.icon-icons.com/icons2/2248/PNG/512/cat_icon_138789.png'
         datum['tutor_picture'] = None
         body.append(datum)
@@ -185,7 +185,7 @@ def get_questions():
         datum['tags'] = list(set(random.choices(tags, k=random.randint(0,5))))
         datum['detail'] = fake.text()
         datum['question_id'] = str(uuid.uuid1())
-        datum['attachments'] = [fake.url() for _ in range(random.choice(num_links))]
+        datum['attachment'] = fake.url()
         datum['user_picture'] = 'https://cdn.icon-icons.com/icons2/2248/PNG/512/cat_icon_138789.png'
         datum['tutor_picture'] = 'https://cdn.dribbble.com/users/1900827/screenshots/5354476/icon.png?compress=1&resize=800x600'
         body.append(datum)

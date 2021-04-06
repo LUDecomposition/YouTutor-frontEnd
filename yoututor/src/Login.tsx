@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Router, Route, Switch , Redirect} from 'react-router-dom';
 const URL = 'https://ccfinalsy2938.auth.us-east-1.amazoncognito.com/oauth2/userInfo';
 
 function getUrlVars() {
@@ -27,11 +27,11 @@ export default function (props:any) {
                 props.login(data);
                 window.sessionStorage.setItem('userToken', JSON.stringify(data));
             }
-            window.location.href = '/'
+            // window.location.href = '/'
         }
         )
     }
     return (
-        <div/>
+        <Redirect to='/'/>
     )
 }

@@ -162,12 +162,22 @@ export default function ProfileContent(props) {
                                 </Typography>}
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography variant="body2" className={classes.contexHeader} color="textSecondary">
-                                    discovered as tutor
-                                </Typography>
-                                <Typography variant="body1" className={classes.contexBody}>
-                                    {(profile.tutor)?('Yes'):('No')}
-                                </Typography>
+                                {
+                                    (props.editable)
+                                    ?(
+                                    <div>
+                                    <Typography variant="body2" className={classes.contexHeader} color="textSecondary">
+                                        discovered as tutor
+                                    </Typography>
+                                    <Typography variant="body1" className={classes.contexBody}>
+                                        {(profile.tutor)?('Yes'):('No')}
+                                    </Typography>
+                                    </div>
+                                    )
+                                    :(
+                                        <div/>
+                                    )
+                                }
                             </Grid>
                             <Grid item xs={12}>
                                 <Typography variant="body2" className={classes.contexHeader} color="textSecondary">
@@ -237,9 +247,7 @@ export default function ProfileContent(props) {
                                 </Button>
                                 )
                                 :(
-                                <Button variant="outlined" size="small">
-                                    ask
-                                </Button>
+                                    <div/>
                                 )
                             }
                             

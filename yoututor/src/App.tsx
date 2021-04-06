@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Router, Route, Switch } from 'react-router-dom';
+import { Router, Route, Switch , Redirect} from 'react-router-dom';
 import { createBrowserHistory } from 'history'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -11,9 +11,12 @@ import Profile from './Profile'
 
 const history = createBrowserHistory();
 
+
+
 function App() {
-  const userToken = sessionStorage.getItem('userToken');
-  const [token, setToken] = useState((userToken == null)?('null'):(JSON.parse(userToken)));
+  // const userToken = sessionStorage.getItem('userToken');
+  // const [token, setToken] = useState((userToken == null)?('null'):(JSON.parse(userToken)));
+  const [token, setToken] = useState('null');
   const [isDark, setDark] = useState(false);
   function switchMode() {
     setDark(!isDark)
@@ -28,7 +31,7 @@ function App() {
       <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router history={history}>
-        <Menu token={token} isDark={isDark} switchRole={switchMode}/>
+        <Menu token={token} isDark={isDark} switchRole={switchMode} logout={() => {setToken('null')}}/>
         <Switch>
           <Route exact path="/"
           render = {
@@ -41,18 +44,34 @@ function App() {
             (props) =>
             <Login login={setToken} {...props}/>
           }/>
-          <Route exact path="/history" 
-            render={
-              (props) =>
-              <History token={token} isDark={isDark} {...props}/>
-            }
-          />
-          <Route exact path='/profile' 
+          {
+            (token != 'null')
+            ?(
+              <Route exact path="/history" 
+              render={
+                (props) =>
+                <History token={token} isDark={isDark} {...props}/>
+              }
+            />
+            )
+            :(
+              <Redirect to='/'/>
+            )
+          }
+          {
+            (token != 'null')
+            ?(
+              <Route exact path='/profile' 
             render={
               (props) =>
               <Profile token={token} isDark={isDark} {...props}/>
             }
-          />
+            />
+            )
+            :(
+              <Redirect to='/'/>
+            )
+          }
         </Switch>
       </Router>
       </ThemeProvider>

@@ -210,9 +210,8 @@ export default function Menu(props: any) {
                     (
                         <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu"
                         onClick={() => {
-                            window.sessionStorage.clear()
-                            window.location.href='/'
-                            // history.push('/')
+                            props.logout();
+                            <Redirect to='/'/>
                         }}>
                         <PowerSettingsNewIcon />
                         </IconButton>
