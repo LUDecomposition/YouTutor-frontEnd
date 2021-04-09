@@ -106,9 +106,15 @@ export default function QuestionCard(props: any) {
             <Grid item xs={3}>
                 {
                     (props.information.tutor != null)
-                    ?(<Avatar alt={props.information.tutor}
+                    ?(
+                    <Button
+                    size="small"
+                    onClick={() => {props.handleProfile(props.information.tutor_id)}}
+                    >
+                        <Avatar alt={props.information.tutor}
                         src={props.information.tutor_picture}
-                        className={classes.avatars}/>)
+                        className={classes.avatars}/>
+                    </Button>)
                     :(
                         < div/>
                     )
@@ -194,12 +200,19 @@ export default function QuestionCard(props: any) {
                 )
             }
             </Grid>
-            <Grid item xs={12}>
+            {
+                (props.information.attachment)
+                ?(
+                <Grid item xs={12}>
                 <Typography variant='body2' color='textSecondary'>
                     <a href={props.information.attachment}>attachment</a>
                 </Typography>
-            </Grid>
-            
+                </Grid>
+                )
+                :(
+                    <div/>
+                )
+            }
         </Grid>
         </CardContent>
     </Card>

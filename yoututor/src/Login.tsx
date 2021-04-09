@@ -15,17 +15,24 @@ function getUrlVars() {
     return Token
 }
 export default function (props:any) {
-    var token = getUrlVars()['access_token'];
-    if (token != ''){
+    var token = getUrlVars()
+    var access_token = token.access_token;
+    var id_token = token.id_token
+    if (access_token != ''){
         var headers = {
-            "Authorization": 'Bearer ' + token,
+            "Authorization": 'Bearer ' + access_token,
         };
         fetch(URL, {method:'get', headers:headers, mode: 'cors'})
         .then(response => response.json())
         .then(data => {
             if (data.email) {
+                data.id_token = id_token
+                data.access_token = access_token
                 props.login(data);
-                window.sessionStorage.setItem('userToken', JSON.stringify(data));
+                window.sessionStorage.setItem('accessToken', access_token)
+                window.sessionStorage.setItem('idToken', access_token)
+                // window.sessionStorage.setItem('credential', JSON.stringify(id_token));
+                // window.sessionStorage.setItem('userToken', JSON.stringify(data));
             }
             // window.location.href = '/'
         }

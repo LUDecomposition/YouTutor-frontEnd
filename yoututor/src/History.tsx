@@ -8,64 +8,13 @@ import InfiniteScroll from 'react-infinite-scroller';
 import Container from '@material-ui/core/Container';
 
 
-import QuestionCard from './QuestionCard'
-import ProfilePop from './ProfilePop'
+import StudentHistory from './StudentHistory'
+import TutorHistory from './TutorHistory'
 
-var URL = 'http://localhost:8080/user/questions'
+var URL = 'https://gr73qrcwnl.execute-api.us-east-1.amazonaws.com/v1/user/history'
 
 export default function History(props: any) {
 
-    const [page, setPage] = useState(0);
-    const [data, setData] = useState<any[]>([])
-
-    const [openUser, setOpenUser] = React.useState(false);
-    const [selectedUser, setUser] = React.useState('null');
-    
-
-    function loadItems() {
-        fetch(URL, {
-            method:'GET', 
-            headers: {
-                'page': JSON.stringify(page),
-                'user_id': props.token.email,
-                'first_name': props.token.given_name,
-                'last_name': props.token.family_name
-            }
-        })
-        .then(res => res.json())
-        .then(datum => 
-            {   
-                const newData = data.concat(datum);
-                setData(newData)
-                setPage(page+1)
-            }
-            )
-    }
-
-    function handleUserOpen(user_id: string) {
-        setOpenUser(true);
-        setUser(user_id);
-    }
-    function handleUserClose(user_id: string) {
-        setOpenUser(false);
-        setUser('null');
-    }
-    
-    const loader = <LinearProgress color="secondary" />
-    var items: Array<any> = []
-    data.forEach(element => {
-        var isOwner = (element.user == (props.token.given_name + ' ' + props.token.family_name))
-        items.push(
-            <ListItem key={element.question_id}>
-                    <QuestionCard information={element} 
-                    isOwner={isOwner} 
-                    isDark={props.isDark} isRecom={false}
-                    handleProfile={handleUserOpen}
-                    handleHelp={handleUserOpen}/>
-            </ListItem>
-        )
-        
-    })
     return(
         <div>
         <Header text={
@@ -75,26 +24,15 @@ export default function History(props: any) {
                 props.isDark
             }
         />
-        <Container maxWidth='lg' style={{textAlign: 'center'}}>
-            <List>
-            {
-                <InfiniteScroll
-                pageStart={0}
-                loadMore={loadItems}
-                hasMore={true}
-                loader={loader}>
-                {items}
-                </InfiniteScroll>
-            }
-            </List>
-        </Container>
-        <ProfilePop
-        openStatus={openUser}
-        closeFunction={handleUserClose}
-        isDark={props.isDark}
-        user_id={selectedUser}
-        editable={false}
-        />
+        {
+            (props.isDark)
+            ?(
+                <TutorHistory token={props.token}/>
+            )
+            :(
+                <StudentHistory token={props.token}/>
+            )
+        }
         </div>
     )
 }

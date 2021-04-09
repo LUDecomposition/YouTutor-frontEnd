@@ -7,7 +7,8 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Chip from '@material-ui/core/Chip';
 import Button from '@material-ui/core/Button';
-var URL = 'http://localhost:8080/user/get_user'
+
+var URL = 'https://gr73qrcwnl.execute-api.us-east-1.amazonaws.com/v1/user/'
 export default function ProfileContent(props) {
     const [profile, setProfile] = useState({
         availability: [], 
@@ -20,8 +21,10 @@ export default function ProfileContent(props) {
         degree: 'null',
         picture: 'null',
         major: 'null',
-        introduction: 'null'
+        introduction: 'null',
+        gender: 'null'
         });
+    const [fetched, setFetched] = useState(false);
     const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         card:{
@@ -62,17 +65,25 @@ export default function ProfileContent(props) {
     }),
     );
     const classes = useStyles();
-    const [value, setValue] = useState(new Date)
     useEffect( () => {
+        var headers = {
+            "Access-Control-Allow-Headers": "*",
+            'token': props.token.id_token,
+            'access_token': props.token.access_token,
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET",
+            'Content-Type':  'application/json',
+            'Access-Control-Allow-Credentials' : 'true',
+            "user_id": props.email
+        }
         fetch(URL, {
             method:'GET', 
-            headers: {
-                'user_id': props.email,
-            }
+            headers: headers
         })
         .then(resp => resp.json())
         .then(datum => {
-            setProfile(datum)
+            setProfile(datum);
+            setFetched(true);
         });
         // return () ={}; 
     },[])
@@ -107,7 +118,10 @@ export default function ProfileContent(props) {
     }
     return (
         <div>
-        <Container maxWidth='md'>
+        {
+            (fetched)
+            ?(
+                <Container maxWidth='md'>
         <Card className={classes.card}>
             <Grid container spacing={2}>
             <Grid item xs={2}>
@@ -129,12 +143,20 @@ export default function ProfileContent(props) {
                 <Container maxWidth='md'>
                     <Card className={classes.details}>
                         <Grid container spacing={2} direction="row" className={classes.content}>
-                            <Grid item xs={12}>
+                            <Grid item xs={6}>
                                 <Typography variant="body2" className={classes.contexHeader} color="textSecondary">
                                     email / user id
                                 </Typography>
                                 <Typography variant="body1" className={classes.contexBody}>
                                     {profile.user_id}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Typography variant="body2" className={classes.contexHeader} color="textSecondary">
+                                    gender
+                                </Typography>
+                                <Typography variant="body1" className={classes.contexBody}>
+                                    {profile.gender}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
@@ -259,6 +281,12 @@ export default function ProfileContent(props) {
             </Grid>
         </Card>
         </Container>
+            )
+            :(
+                <div/>
+            )
+        }
+        
 
 
         </div>

@@ -42,7 +42,7 @@ function App() {
           <Route exact path="/login"
           render = {
             (props) =>
-            <Login login={setToken} {...props}/>
+            <Login login={setToken}{...props}/>
           }/>
           {
             (token != 'null')

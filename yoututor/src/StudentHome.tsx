@@ -15,7 +15,7 @@ import ProfileCard from './ProfileCard'
 import QuestionForm from './QuestionForm'
 import ProfilePop from './ProfilePop'
 
-var URL = 'http://localhost:8080/user/recom_users'
+var URL = 'https://gr73qrcwnl.execute-api.us-east-1.amazonaws.com/v1/recommender/user'
 
 
 
@@ -43,25 +43,39 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function StudentHome(props:any) {
     const [data, setData] = useState<any[]>([])
-    const [page, setPage] = useState(0);
+    const [lastKey, setLast] = useState('null');
     const [hasMoreItems, setMore] = useState(true)
     const [OpenProfile, setOpenProfile] = React.useState(false);
     const [OpenAsk, setOpenAsk] = React.useState(false);
     const [selectedPersonId, setPersonId] = React.useState('null');
     const [selectedPersonName, setPersonName] = React.useState('null');
-    function loadItems(page: number) {
+    function loadItems() {
+        var headers = {
+            "Access-Control-Allow-Headers": "*",
+            'token': props.token.id_token,
+            'access_token': props.token.access_token,
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET",
+            'Content-Type':  'application/json',
+            'Access-Control-Allow-Credentials' : 'true',
+        }
+        if (lastKey != 'null'){
+            headers['last_key'] = lastKey
+        }
         fetch(URL, {
             method: 'GET',
-            headers:{
-                'page': JSON.stringify(page),
-                'user_id': JSON.stringify(props.token.email),
-            }
+            headers: headers
         })
         .then(res => res.json())
         .then(datum => {
-            const newData = data.concat(datum);
+            // console.log(datum);
+            const newData = data.concat(datum.data);
             setData(newData);
-            setPage(page+1)
+            if (datum.LastEvaluatedKey){
+                setLast(datum.LastEvaluatedKey.user_id)
+            } else{
+                setMore(false);
+            }
         })
     }
     function handleOpenProfile(user_id: string) {
@@ -86,6 +100,7 @@ export default function StudentHome(props:any) {
     const loader = <LinearProgress color="secondary" />
 
     var items: Array<any> = []
+    // loadItems()
     data.forEach(element => {
         items.push(
             <ListItem key={element.user_id}>
@@ -118,6 +133,7 @@ export default function StudentHome(props:any) {
         isDark={false}
         user_id={selectedPersonId}
         editable={false}
+        token={props.token}
         />
         <Dialog
         fullWidth

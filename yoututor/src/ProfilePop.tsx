@@ -35,6 +35,7 @@ export default function ProfilePop(props) {
         <ProfileConent isDark={props.isDark} 
                         email={props.user_id}
                         editable={props.editable}
+                        token={props.token}
                         />
         </Dialog>
     )

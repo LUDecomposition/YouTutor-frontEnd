@@ -19,7 +19,7 @@ import QuestionForm from './QuestionForm'
 
 import ProfilePop from './ProfilePop'
 import QuestionCard from './QuestionCard'
-var URL = 'http://localhost:8080/user/recom_questions'
+var URL = 'https://gr73qrcwnl.execute-api.us-east-1.amazonaws.com/v1/recommender/question'
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & { children?: React.ReactElement },
@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function StudentHome(props:any) {
     const [data, setData] = useState<any[]>([])
-    const [page, setPage] = useState(0);
+    const [lastKey, setLast] = useState('null');
     const [hasMoreItems, setMore] = useState(true);
 
     const [OpenProfile, setOpenProfile] = React.useState(false);
@@ -59,18 +59,29 @@ export default function StudentHome(props:any) {
     const [tags, setTags] = useState<string[]>([])
 
     function loadItems(page: number) {
+        var headers = {
+            'token': props.token.id_token,
+            'access_token': props.token.access_token,
+            'last_key': lastKey,
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET",
+            "Access-Control-Allow-Headers": "*",
+            'Content-Type':  'application/json',
+            'Access-Control-Allow-Credentials' : 'true',
+        }
         fetch(URL, {
             method: 'GET',
-            headers:{
-                'page': JSON.stringify(page),
-                'user_id': JSON.stringify(props.token.email),
-            }
+            headers:headers
         })
         .then(res => res.json())
         .then(datum => {
-            const newData = data.concat(datum);
-            setData(newData);
-            setPage(page+1)
+            const newData = data.concat(datum.data);
+            if (datum.LastEvaluatedKey){
+                setData(newData);
+                setLast(JSON.stringify(datum.LastEvaluatedKey))
+            } else{
+                setMore(false);
+            }
         })
     }
     function handleOpenProfile(user_id: string) {
@@ -144,6 +155,7 @@ export default function StudentHome(props:any) {
         isDark={true}
         user_id={selectedPersonId}
         editable={false}
+        token={props.token}
         />
         <Dialog
         fullWidth
