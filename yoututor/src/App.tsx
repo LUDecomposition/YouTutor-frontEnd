@@ -12,7 +12,6 @@ import Profile from './Profile'
 const history = createBrowserHistory();
 
 
-
 function App() {
   // const userToken = sessionStorage.getItem('userToken');
   // const [token, setToken] = useState((userToken == null)?('null'):(JSON.parse(userToken)));
@@ -25,6 +24,8 @@ function App() {
     palette: {
     type: (isDark) ? 'dark' : 'light'
   }})
+
+  
 
   return (
     <div className="App">

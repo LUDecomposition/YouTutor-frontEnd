@@ -56,6 +56,9 @@ export default function StudentHome(props:any) {
     const [title, setTitle] = React.useState('null');
     const [detail, setDetail] = React.useState('null');
     const [attachment, setAttachment] = React.useState('null');
+    const [question_id, setQuestion] = React.useState('null');
+    const [created_at, setCreatedAt] = React.useState('null');
+
     const [tags, setTags] = useState<string[]>([])
 
     function loadItems(page: number) {
@@ -93,6 +96,8 @@ export default function StudentHome(props:any) {
         setPersonId('null');
     }
     function handleOpenHelp(
+        question_id: string,
+        created_at: string,
         user_id: string,
         name: string,
         title: string,
@@ -101,6 +106,8 @@ export default function StudentHome(props:any) {
         tags: string[]
     ) {
         setAsk(true);
+        setQuestion(question_id);
+        setCreatedAt(created_at);
         setPersonId(user_id);
         setName(name);
         setTitle(title);
@@ -165,6 +172,7 @@ export default function StudentHome(props:any) {
         TransitionComponent={Transition}
         >
         <QuestionForm
+        token={props.token}
         isDark={true} 
         ask={false} 
         email={selectedPersonId} 
@@ -173,6 +181,8 @@ export default function StudentHome(props:any) {
         detail={detail}
         attachment={attachment}
         tags={tags}
+        question_id = {question_id}
+        created_at = {created_at}
         />
         </Dialog>
 

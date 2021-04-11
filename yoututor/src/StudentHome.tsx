@@ -145,10 +145,23 @@ export default function StudentHome(props:any) {
         {
             (selectedPersonId == 'null')
             ?(
-                <QuestionForm email={selectedPersonId} name={selectedPersonName} isDark={false} ask={true} tags={[]}/>
+                <QuestionForm 
+                aws={props.aws}
+                token={props.token}
+                email={'Null'} 
+                name={'Null'} 
+                isDark={false} 
+                ask={true} 
+                tags={[]}/>
             )
             :(
-                <QuestionForm email={selectedPersonId} name={selectedPersonName} isDark={false} ask={true} tags={[]}/>
+                <QuestionForm 
+                token={props.token}
+                email={selectedPersonId} 
+                name={selectedPersonName}
+                isDark={false} 
+                ask={true} 
+                tags={[]}/>
             )
         }
         

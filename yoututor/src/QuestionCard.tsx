@@ -175,6 +175,8 @@ export default function QuestionCard(props: any) {
                         variant="outlined" 
                         size="small"
                         onClick={() => {props.handleHelp(
+                            props.information.question_id,
+                            props.information.created_at,
                             props.information.user_id,
                             props.information.user,
                             props.information.title,
