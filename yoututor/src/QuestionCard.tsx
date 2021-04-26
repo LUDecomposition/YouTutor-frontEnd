@@ -1,39 +1,26 @@
 import React from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import Chip from '@material-ui/core/Chip';
-import Link from '@material-ui/core/Link';
-import InfoIcon from '@material-ui/icons/Info';
-import IconButton from '@material-ui/core/IconButton';
-import Slide from '@material-ui/core/Slide';
-import CircularProgress from '@material-ui/core/CircularProgress';
+
+const URL = 'https://gr73qrcwnl.execute-api.us-east-1.amazonaws.com/v1/question/confirm'
 
 export default function QuestionCard(props: any) {
     var button:any = null;
+    var confirmTag: boolean = false;
     if (props.isRecom) {
         button = 'help'
     } else{
-        if (!props.isOwner) {
-            if (props.information.status == 'confirmed') {
-                button = 'cancel'
-            }
-        } else {
-            if (props.information.status != 'finished' && props.information.status != 'canceled') {
-                button = 'cancel'
-            } else {
-                if (props.information.status == 'canceled') {
-                    button = 'repost'
-                }
-            }
+        if (props.information.status != 'finished' && props.information.status != 'expired') {
+            button = 'cancel'
+        }
+        if ((props.isDark && props.information.status === 'asked')|| (!props.isDark && props.information.status === 'accepted')) {
+            confirmTag = true;
         }
     }
     let chips: Array<any> = [];
@@ -190,8 +177,16 @@ export default function QuestionCard(props: any) {
                     )
                     :(
                         <Button 
-                        variant="outlined" 
                         size="small"
+                        color="secondary"
+                        onClick={
+                            () => {
+                                props.handleCancel(
+                                    props.information.question_id,
+                                    String(props.information.created_at)
+                                )
+                            }
+                        }
                         >
                         {button}
                         </Button>
@@ -202,6 +197,7 @@ export default function QuestionCard(props: any) {
                 )
             }
             </Grid>
+            <Grid item xs={10}>
             {
                 (props.information.attachment)
                 ?(
@@ -215,6 +211,58 @@ export default function QuestionCard(props: any) {
                     <div/>
                 )
             }
+            </Grid>
+            <Grid item xs={2}>
+                {
+                    (confirmTag)
+                    ?(
+                        <Button 
+                        size="small"
+                        color="primary"
+                        onClick={
+                            () => {
+                                fetch(
+                                    URL, {
+                                        method:'POST',
+                                        headers: {
+                                            "Access-Control-Allow-Headers": "*",
+                                            'token': props.token.id_token,
+                                            "access_token": props.token.access_token,
+                                            "Access-Control-Allow-Origin": "*",
+                                            "Access-Control-Allow-Methods": "*",
+                                            'Access-Control-Allow-Credentials' : 'true',
+                                            "question_keys": props.information.question_id + ' ' + String(props.information.created_at)
+                                        },
+                                        body:''
+                                    })
+                                    .then(
+                                        response => response.json()
+                                    )
+                                    .then(
+                                        data => {
+                                            alert(data);
+                                            props.reload()
+                                            // window.location.reload();
+                                        }
+                                    ).catch(
+                                        err => {
+                                            alert(err);
+                                            props.reload()
+                                            // window.location.reload();
+                                        }
+                                    )
+                            }
+                        }
+                        >
+                        confirm
+                        </Button>
+                    )
+                    :(
+                        <div/>
+                    )
+                }
+            </Grid>
+            
         </Grid>
         </CardContent>
     </Card>

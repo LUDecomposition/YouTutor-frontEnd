@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Chip from '@material-ui/core/Chip';
 import Button from '@material-ui/core/Button';
-
+import Register from './Register'
 var URL = 'https://gr73qrcwnl.execute-api.us-east-1.amazonaws.com/v1/user/'
 export default function ProfileContent(props) {
     const [profile, setProfile] = useState({
@@ -116,12 +116,20 @@ export default function ProfileContent(props) {
             }
         )
     }
+    const [openStatus, setOpen] = useState(false);
+    function handleOpen(){
+        setOpen(true);
+    }
+
+    function handleClose(){
+        setOpen(false);
+    }
     return (
         <div>
         {
             (fetched)
             ?(
-                <Container maxWidth='md'>
+        <Container maxWidth='md'>
         <Card className={classes.card}>
             <Grid container spacing={2}>
             <Grid item xs={2}>
@@ -264,7 +272,7 @@ export default function ProfileContent(props) {
                             {
                                 (props.editable)
                                 ?(
-                                <Button variant="outlined" size="small">
+                                <Button variant="outlined" size="small" onClick={()=>{handleOpen()}}>
                                     edit
                                 </Button>
                                 )
@@ -280,15 +288,22 @@ export default function ProfileContent(props) {
             </Grid>
             </Grid>
         </Card>
+        <Register 
+            openStatus = {openStatus}
+            closeFunction={handleClose}
+            isDark={props.isDark}
+            profile={profile}
+            isRegister={false}
+            token={props.token}
+            close={handleClose}
+            reload={()=>{window.location.reload()}}
+            />
         </Container>
             )
             :(
                 <div/>
             )
         }
-        
-
-
         </div>
     )
 }

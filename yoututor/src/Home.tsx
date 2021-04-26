@@ -76,7 +76,6 @@ function ClientHome(props: any) {
             )
             :(
                 <StudentHome token={props.token}/>
-                // <TutorCards />
             )
         }
         </div>

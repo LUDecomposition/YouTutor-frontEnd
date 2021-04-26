@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
-
-import Header from './Header'
 import LinearProgress from '@material-ui/core/LinearProgress';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import InfiniteScroll from 'react-infinite-scroller';
 import Container from '@material-ui/core/Container';
-
-
 import QuestionCard from './QuestionCard'
 import ProfilePop from './ProfilePop'
+import CancelPop from './CancelPop'
 
 var URL = 'https://gr73qrcwnl.execute-api.us-east-1.amazonaws.com/v1/user/history'
 
@@ -21,6 +18,11 @@ export default function TutorHistory(props: any) {
     const [hasMoreItems, setMore] = useState(true)
     const [openUser, setOpenUser] = React.useState(false);
     const [selectedUser, setUser] = React.useState('null');
+
+    const [openQuestion, setOpenQuestion] = React.useState(false);
+    const [selectedQuestion, setQuestion] = React.useState('null');
+
+    const [dataKey, setdataKey] = useState<string[]>([]);
 
     function loadItems() {
         fetch(URL, {
@@ -40,17 +42,31 @@ export default function TutorHistory(props: any) {
         .then(res => res.json())
         .then(datum => 
             {   
-                const newData = data.concat(datum.data);
-                setData(newData)
-                if (datum.LastEvaluatedKey){
+            if (datum.data) {
+                if (hasMoreItems && datum.data.length > 0){
+                    if (!dataKey.includes(datum.data[0].user_id)) {
+                        const newKey = data.concat(datum.data[0].user_id);
+                        setdataKey(newKey)
+                        const newData = data.concat(datum.data);
+                        setData(newData)
+                    }
+                }   if (datum.LastEvaluatedKey){
                     setLast(JSON.stringify(datum.LastEvaluatedKey))
                 } else{
                     setMore(false);
                 }
             }
+            }
             )
     }
-
+    function resetItems(){
+        setData([]);
+        setdataKey([]);
+        setLast('null');
+        setLast('null');
+        setMore(true);
+        setOpenQuestion(false);
+    }
     function handleUserOpen(user_id: string) {
         setOpenUser(true);
         setUser(user_id);
@@ -59,23 +75,31 @@ export default function TutorHistory(props: any) {
         setOpenUser(false);
         setUser('null');
     }
+    function handleQuestionOpen(question_id: string, created_at: string) {
+        setOpenQuestion(true);
+        setQuestion(question_id + ' ' + created_at);
+    }
+    function handleQuestionClose(question_id: string) {
+        setOpenQuestion(false);
+        setQuestion('null');
+    }
     
     const loader = <LinearProgress color="secondary" />
-    var items: Array<any> = []
-    data.forEach(element => {
-        var isOwner = (element.user_id === (props.token.email))
-        items.push(
+    var items = data.map(
+        element => (
             <ListItem key={element.question_id}>
-                    <QuestionCard information={element} 
-                    isOwner={isOwner} 
-                    isDark={true} 
-                    isRecom={false}
-                    handleProfile={handleUserOpen}
-                    handleHelp={handleUserOpen}/>
+            <QuestionCard information={element} 
+            isOwner={element.user_id === props.token.email} 
+            isDark={true} 
+            isRecom={false}
+            handleProfile={handleUserOpen}
+            handleCancel={handleQuestionOpen}
+            token={props.token}
+            reload={resetItems}
+            />
             </ListItem>
         )
-        
-    })
+    )
     return(
         <div>
         <Container maxWidth='lg' style={{textAlign: 'center'}}>
@@ -98,6 +122,13 @@ export default function TutorHistory(props: any) {
             user_id={selectedUser}
             editable={false}
             token={props.token}
+        />
+        <CancelPop 
+        token={props.token}
+        question_keys={selectedQuestion}
+        openStatus={openQuestion}
+        handleClose={handleQuestionClose}
+        reload={resetItems}
         />
         </div>
     )

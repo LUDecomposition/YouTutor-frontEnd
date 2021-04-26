@@ -1,6 +1,13 @@
-import React from 'react';
-import { Router, Route, Switch , Redirect} from 'react-router-dom';
+import React, { useState } from 'react';
+import { useEffect } from 'react';
+import Register from './Register'
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 const URL = 'https://ccfinalsy2938.auth.us-east-1.amazoncognito.com/oauth2/userInfo';
+
+const LOGIN = 'https://gr73qrcwnl.execute-api.us-east-1.amazonaws.com/v1/login'
+
+const COGNITO='https://ccfinalsy2938.auth.us-east-1.amazoncognito.com/login?client_id=1d1mb2ktfap98hgif1iigjb9fk&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=http://localhost:3000/login'
 
 function getUrlVars() {
     let Token = {
@@ -14,31 +21,108 @@ function getUrlVars() {
     }
     return Token
 }
+// eslint-disable-next-line import/no-anonymous-default-export
 export default function (props:any) {
+
+    const [registered, setRegister] = useState(true);
+    const [loading, setLoading] = useState(true);
+    const [preLoginToken, setToken] = useState({
+                                            user_id:'', 
+                                            picture:'',
+                                            given_name:'',
+                                            family_name:''
+                                            });
+    
+    function preLogin(token:string, access_token:string) {
+        setLoading(true);
+        Promise.all([fetch(LOGIN,
+            {
+                method:'GET',
+                headers: {
+                    "Access-Control-Allow-Headers": "*",
+                    "token": token,
+                    "access_token": access_token,
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET",
+                    'Content-Type':  'application/json',
+                    'Access-Control-Allow-Credentials' : 'true',
+                }
+            } 
+        ).then(res=>res.json()),
+        fetch(URL, {method:'get', headers : {
+            "Authorization": 'Bearer ' + access_token,
+        }}).then(res=>res.json())
+        ])
+        .then(
+            res => {
+                const datum = res[1];
+                if (datum.email) {
+                    setRegister(res[0]);
+                    datum.user_id = datum.email;
+                    datum.id_token = id_token;
+                    datum.access_token = access_token;
+                    console.log(registered)
+                    if (registered) {
+                        props.login(datum);
+                    } else {
+                        setToken(datum);
+                        setLoading(false);
+                    }
+                } else{
+                    props.login('null');
+                    window.location.href = COGNITO
+                }
+            }
+        )
+    }
+    
+    function handleClose(){
+        setRegister(!registered);
+        props.login(preLoginToken);
+    }
+
     var token = getUrlVars()
     var access_token = token.access_token;
     var id_token = token.id_token
-    if (access_token != ''){
-        var headers = {
-            "Authorization": 'Bearer ' + access_token,
-        };
-        fetch(URL, {method:'get', headers:headers, mode: 'cors'})
-        .then(response => response.json())
-        .then(data => {
-            if (data.email) {
-                data.id_token = id_token
-                data.access_token = access_token
-                props.login(data);
-                window.sessionStorage.setItem('accessToken', access_token)
-                window.sessionStorage.setItem('idToken', access_token)
-                // window.sessionStorage.setItem('credential', JSON.stringify(id_token));
-                // window.sessionStorage.setItem('userToken', JSON.stringify(data));
-            }
-            // window.location.href = '/'
+
+    useEffect(
+        () => {
+            preLogin(id_token, access_token)
         }
-        )
-    }
+    ,[registered])
     return (
-        <Redirect to='/'/>
+        <div>
+        {
+            (loading)
+            ?(
+                <CircularProgress color="secondary" />
+            )
+            :(
+                <Register 
+                openStatus = {!registered}
+                closeFunction={handleClose}
+                isDark={false}
+                profile={{
+                    availability: [], 
+                    tags:[],
+                    first_name: preLoginToken.given_name,
+                    last_name: preLoginToken.family_name,
+                    user_id: preLoginToken.user_id,
+                    tutor: false,
+                    school: '',
+                    degree: '',
+                    picture: preLoginToken.picture,
+                    major: '',
+                    introduction: '',
+                    gender: 'F'
+                    }}
+                isRegister={true}
+                token={preLoginToken}
+                close={handleClose}
+                reload={()=>{window.location.href='./'}}
+            />
+            )
+        }
+        </div>
     )
 }

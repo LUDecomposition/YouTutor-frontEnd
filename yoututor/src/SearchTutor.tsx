@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import InfiniteScroll from 'react-infinite-scroller';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Container from '@material-ui/core/Container';
 import EditIcon from '@material-ui/icons/Edit';
@@ -13,11 +12,9 @@ import IconButton from '@material-ui/core/IconButton';
 import ProfileCard from './ProfileCard'
 import QuestionForm from './QuestionForm'
 import ProfilePop from './ProfilePop'
+import { useEffect } from 'react';
 
-var URL = 'https://gr73qrcwnl.execute-api.us-east-1.amazonaws.com/v1/recommender/user'
-
-
-
+var URL = 'https://gr73qrcwnl.execute-api.us-east-1.amazonaws.com/v1/search/user'
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & { children?: React.ReactElement },
     ref: React.Ref<unknown>,
@@ -38,10 +35,8 @@ const useStyles = makeStyles((theme: Theme) =>
             color:'secondary'
         }
     }))
-export default function StudentHome(props:any) {
+export default function SearchTutor(props:any) {
     const [data, setData] = useState<any[]>([])
-    const [lastKeyUser, setLastUser] = useState('null');
-    const [lastKeyTutor, setLastTutor] = useState('null');
     const [hasMoreItems, setMore] = useState(true)
     const [OpenProfile, setOpenProfile] = React.useState(false);
     const [OpenAsk, setOpenAsk] = React.useState(false);
@@ -57,12 +52,7 @@ export default function StudentHome(props:any) {
             "Access-Control-Allow-Methods": "GET",
             'Content-Type':  'application/json',
             'Access-Control-Allow-Credentials' : 'true',
-        }
-        if (lastKeyUser !== 'null'){
-            headers['last_key'] = JSON.stringify({
-                                    user_id: lastKeyUser,
-                                    tutor_id: lastKeyTutor
-                                    })
+            "keywords": props.keywords
         }
         fetch(URL, {
             method: 'GET',
@@ -79,14 +69,13 @@ export default function StudentHome(props:any) {
                         setData(newData)
                     }
                 }
-                if (datum.LastEvaluatedKey){
-                    setLastUser(datum.LastEvaluatedKey.user_id);
-                    setLastTutor(datum.LastEvaluatedKey.tutor_id)
-                } else{
-                    setMore(false);
-                }
             }
         })
+        .then(
+            () => {
+                setMore(false);
+            }
+        )
     }
     function handleOpenProfile(user_id: string) {
         setOpenProfile(true);
@@ -107,8 +96,14 @@ export default function StudentHome(props:any) {
         setPersonId('null');
         setPersonName('null');
     }
-    const loader = <LinearProgress color="secondary" />
-
+    useEffect(
+        () => {
+            setData([]);
+            setdataKey([]);
+            setMore(true);
+        },[props.keywords]
+    )
+    loadItems()
     var items = data.map(
         element => (
             <ListItem key={element.user_id}>
@@ -121,16 +116,17 @@ export default function StudentHome(props:any) {
         <div>
         <Container maxWidth="lg">
         <List>
-            {
-                <InfiniteScroll
-                pageStart={0}
-                loadMore={loadItems}
-                hasMore={hasMoreItems}
-                loader={loader}>
-                {items}
-                </InfiniteScroll>
-            }
+            {items}
         </List>
+        {
+            (hasMoreItems)
+            ?(
+                <LinearProgress color="secondary" />
+            )
+            :(
+                <div/>
+            )
+        }
         <IconButton onClick={() => {handleAsk('null', 'null')}} className={classes.fabStyle}>
             <EditIcon color="secondary"/>
         </IconButton >

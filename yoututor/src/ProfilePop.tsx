@@ -39,5 +39,4 @@ export default function ProfilePop(props) {
                         />
         </Dialog>
     )
-    
 }

@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import InfiniteScroll from 'react-infinite-scroller';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { TransitionProps } from '@material-ui/core/transitions';
 import Slide from '@material-ui/core/Slide';
 import Container from '@material-ui/core/Container';
 import Dialog from '@material-ui/core/Dialog';
+import { useEffect } from 'react';
 import QuestionForm from './QuestionForm'
 
 
 import ProfilePop from './ProfilePop'
 import QuestionCard from './QuestionCard'
-var URL = 'https://gr73qrcwnl.execute-api.us-east-1.amazonaws.com/v1/recommender/question'
+var URL = 'https://gr73qrcwnl.execute-api.us-east-1.amazonaws.com/v1/search/question'
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & { children?: React.ReactElement },
@@ -37,10 +37,8 @@ const useStyles = makeStyles((theme: Theme) =>
     }))
 
 
-export default function StudentHome(props:any) {
+export default function SearchQuestion(props:any) {
     const [data, setData] = useState<any[]>([])
-    const [lastKeyUser, setLastUser] = useState('null');
-    const [lastKeyTutor, setLastTutor] = useState('null');
     const [hasMoreItems, setMore] = useState(true);
 
     const [OpenProfile, setOpenProfile] = React.useState(false);
@@ -59,30 +57,23 @@ export default function StudentHome(props:any) {
     const [tags, setTags] = useState<string[]>([])
 
     function loadItems() {
-        var lastKey = 'null'
-        if (lastKeyUser !== 'null'){
-            lastKey = JSON.stringify({
-                user_id: lastKeyUser,
-                tutor_id: lastKeyTutor
-                })
-        }
         var headers = {
+            "Access-Control-Allow-Headers": "*",
             'token': props.token.id_token,
             'access_token': props.token.access_token,
-            'last_key': lastKey,
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "GET",
-            "Access-Control-Allow-Headers": "*",
             'Content-Type':  'application/json',
             'Access-Control-Allow-Credentials' : 'true',
+            "keywords": props.keywords
         }
         fetch(URL, {
             method: 'GET',
-            headers:headers
+            headers: headers
         })
         .then(res => res.json())
-        .then(datum => { 
-            if (datum.data){
+        .then(datum => {
+            if (datum.data) {
                 if (hasMoreItems && datum.data.length > 0){
                     if (!dataKey.includes(datum.data[0].user_id)) {
                         const newKey = data.concat(datum.data[0].user_id);
@@ -91,13 +82,11 @@ export default function StudentHome(props:any) {
                         setData(newData)
                     }
                 }
-                if (datum.LastEvaluatedKey){
-                    setLastUser(datum.LastEvaluatedKey.user_id);
-                    setLastTutor(datum.LastEvaluatedKey.tutor_id)
-                } else{
-                    setMore(false);
-                }
             }
+        })
+        .then(
+            () => {
+                setMore(false);
             }
         )
     }
@@ -141,10 +130,15 @@ export default function StudentHome(props:any) {
     function reloadPage(){
         setData([]);
         setMore(true);
-        setLastUser('null');
-        setLastTutor('null');
     }
-    const loader = <LinearProgress color="secondary" />
+    useEffect(
+        () => {
+            setData([]);
+            setdataKey([]);
+            setMore(true);
+        },[props.keywords]
+    )
+    loadItems();
     var items: Array<any> = []
     data.forEach(element => {
         items.push(
@@ -164,16 +158,17 @@ export default function StudentHome(props:any) {
         <div>
         <Container maxWidth="lg">
             <List>
-            {
-                <InfiniteScroll
-                pageStart={0}
-                loadMore={loadItems}
-                hasMore={hasMoreItems}
-                loader={loader}>
-                {items}
-                </InfiniteScroll>
-            }
+            {items}
             </List>
+            {
+            (hasMoreItems)
+            ?(
+                <LinearProgress color="secondary" />
+            )
+            :(
+                <div/>
+            )
+            }
         </Container>
         <ProfilePop
         openStatus={OpenProfile}

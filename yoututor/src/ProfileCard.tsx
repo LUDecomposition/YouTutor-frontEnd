@@ -6,15 +6,9 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import Chip from '@material-ui/core/Chip';
-import InfoIcon from '@material-ui/icons/Info';
-import IconButton from '@material-ui/core/IconButton';
-import Slide from '@material-ui/core/Slide';
 
 export default function ProfileCard(props: any) {
     

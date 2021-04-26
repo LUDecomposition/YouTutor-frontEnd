@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {fade, makeStyles, createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
-import { Route, Redirect, useHistory} from 'react-router-dom'
+import { Redirect, useHistory} from 'react-router-dom'
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -19,9 +19,6 @@ import ForumIcon from '@material-ui/icons/Forum';
 const Login = () =>{
     window.location.href='https://ccfinalsy2938.auth.us-east-1.amazoncognito.com/login?client_id=1d1mb2ktfap98hgif1iigjb9fk&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=http://localhost:3000/login';}
 
-// const toProfile = () =>{
-//     window.location.href='/profile'
-// }
 function Switches(props: any) {
     return (
         <div>
@@ -126,6 +123,8 @@ export default function Menu(props: any) {
             main: secondaryColor,
             },
         },});
+    const [searchWords, setSearch] = useState('');
+
     
     return (
     <ThemeProvider theme={theme}>
@@ -138,7 +137,7 @@ export default function Menu(props: any) {
                     ?(
                         <Box display="inline">
                         <Button 
-                        onClick={() => {history.push('/')}}>
+                        onClick={() => {setSearch('');history.push('/')}}>
                         <h2 style={{fontFamily:'Righteous', color:(isLogin)?((isDark)?'#ffffff':'#000000'):'#ffffff'}}>YouTutor</h2></Button> 
                         </Box>
                     )
@@ -153,14 +152,32 @@ export default function Menu(props: any) {
                     <div className={classes.searchIcon}>
                         <SearchIcon />
                     </div>
-                    <InputBase
-                        placeholder="Search…"
-                        classes={{
-                        root: classes.inputRoot,
-                        input: classes.inputInput,
-                        }}
-                        inputProps={{ 'aria-label': 'search' }}
-                    />
+                    <form onSubmit={
+                        (e) => {
+                            if (searchWords !== ''){
+                                history.push(
+                                    {
+                                        pathname: '/search',
+                                        search: '?q='+searchWords,
+                                        state:{
+                                            q:searchWords
+                                        }
+                                    }
+                                );
+                                e.preventDefault();
+                            }
+                        }
+                    }>
+                        <InputBase
+                            placeholder="Search…"
+                            classes={{
+                            root: classes.inputRoot,
+                            input: classes.inputInput,
+                            }}
+                            value={searchWords}
+                            onChange={(e) => {setSearch(e.target.value)}}
+                        />
+                    </form>
                     </div>
                     )
                     :(
@@ -185,7 +202,7 @@ export default function Menu(props: any) {
                     isLogin?
                     (
                         <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu"
-                        onClick={() => {history.push('/history')}}
+                        onClick={() => {setSearch('');history.push('/history')}}
                         >
                         <ForumIcon />
                         </IconButton>
@@ -197,7 +214,7 @@ export default function Menu(props: any) {
                 {
                     isLogin?
                     (<IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" 
-                    onClick={() => {history.push('/profile')}}>
+                    onClick={() => {setSearch('');history.push('/profile')}}>
                     <PersonIcon />
                     </IconButton>)
                     :(<IconButton edge="start" className={classes.menuButton} color="secondary" aria-label="menu" 
@@ -223,7 +240,6 @@ export default function Menu(props: any) {
             </Toolbar>
             </Container>
             </AppBar>
-            {/* <Toolbar /> */}
         </div>
     </ThemeProvider>
     );}

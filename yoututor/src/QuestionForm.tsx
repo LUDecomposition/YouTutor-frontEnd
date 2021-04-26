@@ -5,7 +5,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Card from '@material-ui/core/Card';
-import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
+import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Chip from '@material-ui/core/Chip';
 import Typography from '@material-ui/core/Typography';
@@ -148,8 +148,6 @@ export default function QuestionForm(props) {
                 file_link = 'https://ccfinalattachment.s3.amazonaws.com/' + filename.replace(/@/g, '%40')
             }
             var tutor_id = props.email;
-    
-    
             let body = {
                 send_email: sendEmail,
                 title: currTitle,
@@ -160,7 +158,6 @@ export default function QuestionForm(props) {
                 tags: tags,
                 tutor_id: tutor_id,
                 tutor_name: props.name,
-                created_at: nowTime
             }
             var put_headers = {
                 "Access-Control-Allow-Headers": "*",
@@ -180,7 +177,8 @@ export default function QuestionForm(props) {
                 resp => resp.json()
             ).then(
                 resp => {
-                    console.log(resp)
+                    alert('question ask request submitted')
+                    props.close()
                 }
             ).catch(
                 err => {
@@ -218,7 +216,8 @@ export default function QuestionForm(props) {
                 start_time: currStartTime,
                 end_time: currEndTime,
                 user_id: props.email,
-                user_name: props.name
+                user_name: props.name,
+                status: 'accepted'
             }
             fetch(
                 QUESTION, {
@@ -226,7 +225,11 @@ export default function QuestionForm(props) {
                     headers: post_headers,
                     body: JSON.stringify(body)
                 }
-            ).then(() => {alert('request sent')})
+            ).then(() => {
+                alert('request sent')
+                props.close()
+                props.reload()
+            })
             .catch(
                 err => {
                     console.log(err)
@@ -355,7 +358,7 @@ export default function QuestionForm(props) {
                             value={currTag}
                             label="Tag"
                             onChange={(e) => {_handleTextFieldChange(e, setTag)}}
-                        />
+                            />
                         <Button size="small" onClick={handleAddTag}>add</Button>
                         </Grid>
                     )
