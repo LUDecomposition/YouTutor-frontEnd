@@ -7,7 +7,7 @@ const URL = 'https://ccfinalsy2938.auth.us-east-1.amazoncognito.com/oauth2/userI
 
 const LOGIN = 'https://gr73qrcwnl.execute-api.us-east-1.amazonaws.com/v1/login'
 
-const COGNITO='https://ccfinalsy2938.auth.us-east-1.amazoncognito.com/login?client_id=1d1mb2ktfap98hgif1iigjb9fk&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=https://sad-lewin-ba81ae.netlify.app/login'
+const COGNITO='https://ccfinalsy2938.auth.us-east-1.amazoncognito.com/login?client_id=1d1mb2ktfap98hgif1iigjb9fk&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=https://yoututor.netlify.app/login'
 
 
 
