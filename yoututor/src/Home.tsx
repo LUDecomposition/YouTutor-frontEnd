@@ -14,7 +14,7 @@ function PublicHome(props: any) {
             minWidth: 275,
             background: 'linear-gradient(to bottom, #9492ef, #dc95ee)',
             borderRadius: 0,
-            boxShadow: "none"
+            boxShadow: "none",
         },
         bullet: {
             display: 'inline-block',
@@ -26,13 +26,13 @@ function PublicHome(props: any) {
             fontFamily: 'Amatic SC',
             color: '#ffffff',
             textAlign: 'center',
-            marginTop: '7%'
+            marginTop: '20%'
         },
         pos: {
             marginBottom: 12,
         },
         footer: {
-            marginTop: '25%'
+            marginTop: '55%'
         }
     });
     
@@ -47,7 +47,6 @@ function PublicHome(props: any) {
         </Typography>
         </CardContent>
         <CardActions className={classes.footer}>
-        {/* <Button size="large">Learn More</Button> */}
         </CardActions>
     </Card>
     );

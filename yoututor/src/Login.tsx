@@ -7,7 +7,9 @@ const URL = 'https://ccfinalsy2938.auth.us-east-1.amazoncognito.com/oauth2/userI
 
 const LOGIN = 'https://gr73qrcwnl.execute-api.us-east-1.amazonaws.com/v1/login'
 
-const COGNITO='https://ccfinalsy2938.auth.us-east-1.amazoncognito.com/login?client_id=1d1mb2ktfap98hgif1iigjb9fk&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=http://localhost:3000/login'
+const COGNITO='https://ccfinalsy2938.auth.us-east-1.amazoncognito.com/login?client_id=1d1mb2ktfap98hgif1iigjb9fk&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=https://sad-lewin-ba81ae.netlify.app/login'
+
+
 
 function getUrlVars() {
     let Token = {
@@ -34,7 +36,6 @@ export default function (props:any) {
                                             });
     
     function preLogin(token:string, access_token:string) {
-        setLoading(true);
         Promise.all([fetch(LOGIN,
             {
                 method:'GET',
@@ -57,16 +58,16 @@ export default function (props:any) {
             res => {
                 const datum = res[1];
                 if (datum.email) {
-                    setRegister(res[0]);
                     datum.user_id = datum.email;
                     datum.id_token = id_token;
                     datum.access_token = access_token;
-                    console.log(registered)
-                    if (registered) {
+                    if (res[0]) {
                         props.login(datum);
+                        window.location.href = './';
                     } else {
                         setToken(datum);
                         setLoading(false);
+                        console.log(loading)
                     }
                 } else{
                     props.login('null');
@@ -75,10 +76,7 @@ export default function (props:any) {
             }
         )
     }
-    
     function handleClose(){
-        setRegister(!registered);
-        props.login(preLoginToken);
     }
 
     var token = getUrlVars()
@@ -89,7 +87,7 @@ export default function (props:any) {
         () => {
             preLogin(id_token, access_token)
         }
-    ,[registered])
+    ,[])
     return (
         <div>
         {
@@ -99,7 +97,7 @@ export default function (props:any) {
             )
             :(
                 <Register 
-                openStatus = {!registered}
+                openStatus = {!loading}
                 closeFunction={handleClose}
                 isDark={false}
                 profile={{

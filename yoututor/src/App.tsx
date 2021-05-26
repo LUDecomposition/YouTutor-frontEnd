@@ -34,7 +34,7 @@ function App() {
       setToken(token);
     }
   }
-
+  document.title = 'YouTutor'
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
