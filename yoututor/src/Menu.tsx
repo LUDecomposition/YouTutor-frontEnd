@@ -17,7 +17,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import Switch from '@material-ui/core/Switch';
 import ForumIcon from '@material-ui/icons/Forum';
 const Login = () =>{
-    window.location.href='https://ccfinalsy2938.auth.us-east-1.amazoncognito.com/login?client_id=1d1mb2ktfap98hgif1iigjb9fk&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=https://sad-lewin-ba81ae.netlify.app/login';
+    window.location.href='https://ccfinalsy2938.auth.us-east-1.amazoncognito.com/login?client_id=1d1mb2ktfap98hgif1iigjb9fk&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=https://yoututor.netlify.app/login';
 }
 
 function Switches(props: any) {
